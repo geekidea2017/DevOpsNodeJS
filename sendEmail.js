@@ -16,7 +16,7 @@ let smtpConfig = {
     secure: true, // use TLS
     auth: {
         user: 'dhaneswar.majhi@gmail.com', 
-        pass: 'M.dhani10'
+        pass: '*************'
     }
 };
 
