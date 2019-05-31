@@ -16,7 +16,7 @@ let smtpConfig = {
     secure: true, // use TLS
     auth: {
         user: 'dhaneswar.majhi@gmail.com', 
-        pass: '*************'
+        pass: 'M.dhani10'
     }
 };
 
@@ -104,7 +104,6 @@ devOpsInfo.forEach(function(key) {
 
                  // console.log("ksdjhdsf "+responses.body);
 
-
                        sendEmail(key,resp.body, function (email_response) {
                             response.msg = email_response['msg'];
                             response.code = email_response['code'];
@@ -125,13 +124,23 @@ devOpsInfo.forEach(function(key) {
 
 function sendEmail(key,responses, callback) {
 
+
+var htmlReport = '<!DOCTYPE html><html lang="en"><head><title>DevOps Dashboard</title><meta charset="utf-8">'
++'<meta name="viewport" content="width=device-width, initial-scale=1">'
++'<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script></head><body>'
++'<div class="container"><h2>DevOps Dashboard for : <b>'+key.clientName + " " +key.appName
++' </b></h2><p>Issues are listed below on  date : <b>'+ responses.date
++' </b>  </p><table class="table"><thead><tr><th>Name</th><th>Data</th></tr>'
++'</thead><tbody><tr><td>Blocker</td><td>'+ responses.blockers+' </td></tr><tr class="success"><td> Critical</td><td>'+responses.criticalIssue
++' </td></tr><tr class="danger"><td>Status </td><td>'+responses.status+' </td></tr></tbody></table></div></body></html>';
     let transporter = nodemailer.createTransport(smtpConfig);
     let senderMailID = smtpConfig.auth.user;
     let mailOptions = {
         from: senderMailID,
         to: key.sender1+','+key.sender2,//params.email,
         subject: `DevOps Dasboard Daily updates `,
-        text: `Do it! `+ responses.status
+        text: 'Hi Team , ',
+        html:htmlReport
     };
     transporter.sendMail(mailOptions, function (error, info) {
 
