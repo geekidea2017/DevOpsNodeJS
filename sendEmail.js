@@ -16,48 +16,48 @@ let smtpConfig = {
     secure: true, // use TLS
     auth: {
         user: 'dhaneswar.majhi@gmail.com', 
-        pass: '********'
+        pass: 'M.dhani10'
     }
 };
 
-
+//saisravvyapavani@gmail.com
 
 var devOpsInfo = [{
       clientName: "IberiaAirline",
       appName: "CabinCrewPassengerPlus",
       sender1:"dhaneswar.majhi@gmail.com",
-      sender2:"saisravvyapavani@gmail.com",
+      sender2:"",
       type:"sonar"
 
    },{
         clientName: "IberiaAirline",
       appName: "CabinCrewPassengerPlus",
        sender1:"dhaneswar.majhi@gmail.com",
-      sender2:"saisravvyapavani@gmail.com",
+      sender2:"",
       type:"sonarbackend"
    },{
        clientName: "Lufthansa",
       appName: "Ramp",
        sender1:"dhaneswar.majhi@gmail.com",
-      sender2:"saisravvyapavani@gmail.com",
+      sender2:"",
       type:"sonar"
    },{
        clientName: "Lufthansa",
       appName: "Ramp",
       sender1:"dhaneswar.majhi@gmail.com",
-      sender2:"saisravvyapavani@gmail.com",
+      sender2:"",
       type:"sonarbackend"
    },{
        clientName: "Lufthansa",
       appName: "TurnAroundMonitor",
       sender1:"dhaneswar.majhi@gmail.com",
-      sender2:"saisravvyapavani@gmail.com",
+      sender2:"",
       type:"sonar"
    },{
        clientName: "Lufthansa",
       appName: "TurnAroundMonitor",
       sender1:"dhaneswar.majhi@gmail.com",
-      sender2:"saisravvyapavani@gmail.com",
+      sender2:"",
       type:"sonarbackend"
    }];
 
@@ -91,6 +91,9 @@ devOpsInfo.forEach(function(key) {
             // responses = JSON.stringify(resp);
             // console.log("fdsjkfhdsf "+JSON.stringify(resp));
             console.log("dasjkdbds "+ resp.body.status)
+
+
+
           let response = {
                       code: 200,
                       msg: 'E-mail was sent successfully!'
@@ -102,15 +105,18 @@ devOpsInfo.forEach(function(key) {
                    console.log(`Validation was successful, preparing to send email...`);
                 setTimeout(function() {
 
-                 // console.log("ksdjhdsf "+responses.body);
-
-                       sendEmail(key,resp.body, function (email_response) {
+                  if(typeof resp.body.blockers !== 'undefined' && typeof resp.body.criticalIssue !== 'undefined' && typeof resp.body.status !== 'undefined'){
+                    if(resp.body.blockers > 0 || resp.body.criticalIssue > 0 || resp.body.status != 'Pass'){
+                    sendEmail(key,resp.body, function (email_response) {
                             response.msg = email_response['msg'];
                             response.code = email_response['code'];
                             response.reason = email_response['reason'];
                             console.log(`Email delivery response: (${email_response['code']}) ${response.msg}`);
                             resolve(response);
                         });
+                  }
+                  }
+                      
                 }, 3000);
 
           return  resp;
@@ -123,16 +129,32 @@ devOpsInfo.forEach(function(key) {
 }
 
 function sendEmail(key,responses, callback) {
+var htmlReport = "";
+if(key.type == 'sonar'){
 
-
-var htmlReport = '<!DOCTYPE html><html lang="en"><head><title>DevOps Dashboard</title><meta charset="utf-8">'
+ htmlReport = '<!DOCTYPE html><html lang="en"><head><title>DevOps Dashboard</title><meta charset="utf-8">'
 +'<meta name="viewport" content="width=device-width, initial-scale=1">'
-+'<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script></head><body>'
-+'<div class="container"><h2>DevOps Dashboard for : <b>'+key.clientName + " " +key.appName
++'<style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>'
++'<div class="container"><h2>DevOps IOS Sonar report for : <b>'+key.clientName + " " +key.appName
 +' </b></h2><p>Issues are listed below on  date : <b>'+ responses.date
 +' </b>  </p><table class="table"><thead><tr><th>Name</th><th>Data</th></tr>'
 +'</thead><tbody><tr><td>Blocker</td><td>'+ responses.blockers+' </td></tr><tr class="success"><td> Critical</td><td>'+responses.criticalIssue
 +' </td></tr><tr class="danger"><td>Status </td><td>'+responses.status+' </td></tr></tbody></table></div></body></html>';
+
+}else{
+
+ htmlReport = '<!DOCTYPE html><html lang="en"><head><title>DevOps Dashboard</title><meta charset="utf-8">'
++'<meta name="viewport" content="width=device-width, initial-scale=1">'
++'<style>table, th, td {border: 1px solid black;border-collapse: collapse;}th, td {padding: 5px;text-align: left;}</style></head><body>'
++'<div class="container"><h2>DevOps Back-End Sonar report for : <b>'+key.clientName + " " +key.appName
++' </b></h2><p>Issues are listed below on  date : <b>'+ responses.date
++' </b>  </p><table class="table"><thead><tr><th>Name</th><th>Data</th></tr>'
++'</thead><tbody><tr><td>Blocker</td><td>'+ responses.blockers+' </td></tr><tr class="success"><td> Critical</td><td>'+responses.criticalIssue
++' </td></tr><tr class="danger"><td>Status </td><td>'+responses.status+' </td></tr></tbody></table></div></body></html>';
+
+}
+
+
     let transporter = nodemailer.createTransport(smtpConfig);
     let senderMailID = smtpConfig.auth.user;
     let mailOptions = {
